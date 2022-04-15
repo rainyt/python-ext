@@ -1,0 +1,11 @@
+{
+	"name": "python-ext",
+	"url": "",
+	"license": "MIT",
+	"tags": [],
+	"description": "Python扩展支持，如Python的多样化参数赋值",
+	"version": "0.0.1",
+	"releasenote": "Python扩展支持",
+	"contributors": [ "rainy" ],
+	"classPath": "src"
+}
