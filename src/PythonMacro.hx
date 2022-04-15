@@ -35,11 +35,11 @@ class PythonMacro {
 	}
 
 	public static function findField(expr:ExprDef, field:String):ClassField {
-		trace("findField", expr, field);
+		// trace("findField", expr, field);
 		switch (expr) {
 			case EConst(c):
 				var className = c.getParameters()[0];
-				trace("find", className, field);
+				// trace("find", className, field);
 				switch (Context.getType("PythonClass")) {
 					case TInst(t, params):
 						return TypeTools.findField(t.get(), field, true);
@@ -54,13 +54,11 @@ class PythonMacro {
 		switch (expr) {
 			case EField(e, field):
 			case ECall(e, params):
-				trace(e, params);
 				var expr:Expr = e.expr.getParameters()[0];
 				var call:String = e.expr.getParameters()[1];
 				var className = findField(expr.expr, call);
-				trace(className);
-				if (className.meta.get().filter((data) -> return data.name == ":pythonArgs").length > 0) {
-					trace("参数：", params);
+				if (className != null && className.meta.get().filter((data) -> return data.name == ":pythonArgs").length > 0) {
+					// trace("参数：", params);
 					// python参数转化
 					var types = className.type.getParameters()[0];
 					for (index => item in params) {
