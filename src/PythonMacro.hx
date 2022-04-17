@@ -45,11 +45,15 @@ class PythonMacro {
 
 	public static function parserExpr(e:Expr):Void {
 		switch (e.expr) {
-			case EMeta(s, e):
-				if (s.name == "name") {
-					var paramName = ExprTools.getValue(s.params[0]);
-					var code = ExprTools.toString(e);
-					e.expr = (macro PythonUtils.param($v{paramName}, $v{code})).expr;
+			case ECall(e, params):
+				for (item in params) {
+					switch (item.expr) {
+						case EMeta(s, e):
+							var paramName = s.name;
+							var code = ExprTools.toString(e);
+							e.expr = (macro PythonUtils.param($v{paramName}, $v{code})).expr;
+						default:
+					}
 				}
 			default:
 		}
