@@ -9,7 +9,7 @@ class Main extends Python{}
 
 // 或者使用@:build
 @:build(PythonMacro.build())
-class Main extends Python{}
+class Main {}
 ```
 然后使用：
 ```haxe
