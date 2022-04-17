@@ -1,3 +1,4 @@
+import haxe.Exception;
 import haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
 import haxe.macro.Expr;
@@ -15,65 +16,40 @@ class PythonMacro {
 		if (array == null)
 			return array;
 		for (item in array) {
-			parser(item, null);
+			parser(item);
 		}
 		return array;
 	}
 
-	public static function parser(item:Field, array:Array<Expr>):Void {
-		parserKind(item.kind, array);
+	public static function parser(item:Field) {
+		parserFieldType(item.kind);
 	}
 
-	public static function parserKind(kind:FieldType, array:Array<Expr>):Void {
-		switch (kind) {
-			case FFun(func):
-				parserExpr(func.expr, func.expr.expr, array);
+	public static function parserFieldType(t:FieldType):Void {
+		switch (t) {
 			case FVar(t, e):
-
+				parserExprIter(e);
+			case FFun(f):
+				parserExprIter(f.expr);
 			case FProp(get, set, t, e):
+				parserExprIter(e);
 		}
 	}
 
-	public static function findField(expr:ExprDef, field:String):ClassField {
-		// trace("findField", expr, field);
-		switch (expr) {
-			case EConst(c):
-				var className = c.getParameters()[0];
-				// trace("find", className, field);
-				switch (Context.getType("PythonClass")) {
-					case TInst(t, params):
-						return TypeTools.findField(t.get(), field, true);
-					default:
-				}
-			default:
-		}
-		return null;
+	public static function parserExprIter(expr:Expr):Void {
+		parserExpr(expr);
+		ExprTools.iter(expr, function(e) {
+			parserExprIter(e);
+		});
 	}
 
-	public static function parserExpr(parentExpr:Expr, expr:ExprDef, array:Array<Expr>):Void {
-		switch (expr) {
-			case EField(e, field):
-			case ECall(e, params):
-				var expr:Expr = e.expr.getParameters()[0];
-				var call:String = e.expr.getParameters()[1];
-				var className = findField(expr.expr, call);
-				if (className != null && className.meta.get().filter((data) -> return data.name == ":pythonArgs").length > 0) {
-					// trace("参数：", params);
-					// python参数转化
-					var types = className.type.getParameters()[0];
-					for (index => item in params) {
-						var code = ExprTools.toString(item);
-						var expr = macro {
-							PythonUtils.param($v{types[index].name}, $v{code});
-						}
-						item.expr = expr.expr;
-					}
-				}
-			// parserExpr(e.expr);
-			case EBlock(exprs):
-				// trace(exprs);
-				for (item in exprs) {
-					parserExpr(item, item.expr, exprs);
+	public static function parserExpr(e:Expr):Void {
+		switch (e.expr) {
+			case EMeta(s, e):
+				if (s.name == "name") {
+					var paramName = ExprTools.getValue(s.params[0]);
+					var code = ExprTools.toString(e);
+					e.expr = (macro PythonUtils.param($v{paramName}, $v{code})).expr;
 				}
 			default:
 		}
