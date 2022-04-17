@@ -4,7 +4,14 @@ import haxe.macro.Expr.FieldType;
 import haxe.macro.Expr.Field;
 import haxe.macro.Context;
 
+/**
+ * Python增强宏实现
+ */
 class PythonMacro {
+	/**
+	 * 通过`@:build(PythonMacro.build())`
+	 * @return Array<Field>
+	 */
 	macro public static function build():Array<Field> {
 		var array = Context.getBuildFields();
 		if (array == null)
@@ -15,10 +22,18 @@ class PythonMacro {
 		return array;
 	}
 
+	/**
+	 * 解析Field
+	 * @param item 
+	 */
 	public static function parser(item:Field) {
 		parserFieldType(item.kind);
 	}
 
+	/**
+	 * 解析FieldType
+	 * @param t 
+	 */
 	public static function parserFieldType(t:FieldType):Void {
 		switch (t) {
 			case FVar(t, e):
@@ -30,6 +45,10 @@ class PythonMacro {
 		}
 	}
 
+	/**
+	 * 递归处理Expr
+	 * @param expr 
+	 */
 	public static function parserExprIter(expr:Expr):Void {
 		parserExpr(expr);
 		ExprTools.iter(expr, function(e) {
@@ -37,9 +56,14 @@ class PythonMacro {
 		});
 	}
 
+	/**
+	 * 元数据实现
+	 * @param e 
+	 */
 	public static function parserExpr(e:Expr):Void {
 		switch (e.expr) {
 			case ECall(e, params):
+				// 方法调用中，实现param=value的处理
 				for (item in params) {
 					switch (item.expr) {
 						case EMeta(s, e):
