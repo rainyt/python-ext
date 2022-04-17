@@ -1,14 +1,8 @@
-import haxe.Exception;
 import haxe.macro.ExprTools;
-import haxe.macro.TypeTools;
 import haxe.macro.Expr;
 import haxe.macro.Expr.FieldType;
-import haxe.macro.Type.FieldKind;
-import haxe.Json;
-import sys.io.File;
 import haxe.macro.Expr.Field;
 import haxe.macro.Context;
-import haxe.macro.Type;
 
 class PythonMacro {
 	macro public static function build():Array<Field> {
