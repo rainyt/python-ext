@@ -18,7 +18,7 @@ with playwright_sync_api_Sync_api_Module.sync_playwright() as p:
 
 ## Python传参支持（param=value）
 ```haxe
-pythonApi.call(@name("path") "paramvalue");
+pythonApi.call(@path "paramvalue");
 ```
 结果等于：
 ```python
