@@ -1,13 +1,15 @@
 ## Python扩展宏
-可以为Python目标提供扩展支持
+可以为Python目标提供扩展支持。
+Extended support for Python targets.
 
 ## Python传参支持（param=value）
 在使用Python的args传参时，有两种方式：
+When using args of Python to pass parameters, there are two ways:
 ```haxe
-// 继承Python
+// extends Python
 class Main extends Python{}
 
-// 或者使用@:build
+// use @:build
 @:build(PythonMacro.build())
 class Main {}
 ```
