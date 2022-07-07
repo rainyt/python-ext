@@ -69,7 +69,16 @@ class PythonMacro {
 						case EMeta(s, e):
 							var paramName = s.name;
 							var code = ExprTools.toString(e);
-							e.expr = (macro PythonUtils.param($v{paramName}, $v{code})).expr;
+							if (paramName.indexOf(":") != -1) {
+								switch (paramName) {
+									case ":s":
+										e.expr = (macro PythonUtils.paramStar($v{code})).expr;
+									case ":ss":
+										e.expr = (macro PythonUtils.paramStarStar($v{code})).expr;
+								}
+							} else {
+								e.expr = (macro PythonUtils.param($v{paramName}, $v{code})).expr;
+							}
 						default:
 					}
 				}
